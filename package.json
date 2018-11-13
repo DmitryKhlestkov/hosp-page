@@ -1,0 +1,15 @@
+{
+  "name": "hosp",
+  "version": "1.0.0",
+  "description": "nodejs and pgsql",
+  "main": "index,js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "dmitry khlestkov",
+  "license": "ISC",
+  "dependencies": {
+    "npm": "^6.4.1"
+  }
+}
