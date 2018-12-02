@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Главная старница</title>
+  <meta charset="utf-8">
+  <!-- видимая пользователю область страницы -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+  <% include blocks/header.ejs %>
+  <div class="jumbotron text-center">
+    <h1>Система хранения данных пациентов</h1>
+    <p>Здесь вы можите хранить всю информацию о пациенте.</p>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Фамилия</th>
+        <th scope="col">Имя</th>
+        <th scope="col">Отчество</th>
+        <th scope="col">Дата рождения</th>
+        <th scope="col">СНИЛС</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% obj.forEach(function(element, index, array) { %>
+        <tr>
+          <th scope="row"><%= index+1 %></th>
+          <td><%= element.Фамилия %></td>
+          <td><%= element.Имя %></td>
+          <td><%= element.Отчетсво %></td>
+          <td><%= element.ДатаРождения %></td>
+          <td><%= element.СНИЛС %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+</body>
+</html>
