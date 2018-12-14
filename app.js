@@ -3,19 +3,8 @@ const bodyParser = require("body-parser");
 const moment = require("moment");
 var app = express();
 
-// const { Pool, Client } = require('pg');
-//
-// const client = new Client({
-//     user: 'postgres',
-//     host: 'localhost',
-//     database: 'postgres',
-//     password: 'postgres',
-//     port: '5432'
-// });
 var pg = require('pg');
 var connect = "postgres://postgres:postgres@localhost/postgres";
-
-
 
 var router = express.Router();
 var urlEncodedParser = bodyParser.urlencoded({extended: false});
@@ -35,8 +24,12 @@ router.get("/index",function(req,res){
   res.render('index');
 });
 
-router.post("\addpac", urlEncodedParser, function(req,res){
+router.get("/",function(req,res){
   //res.sendFile(path + "index.html");
+  res.render('index');
+});
+
+router.post("/addpac", urlEncodedParser, function(req,res){
   if(!req.body)
     return res.sendStatus(400);
   console.log(req.body);
@@ -50,9 +43,8 @@ router.post("\addpac", urlEncodedParser, function(req,res){
         console.log('error fetching client from pool', err);
       }
       client.query(text, args, function(err, result){
-        // res.render("", {obj: result.rows})
         done();
-        res.redirect('#');
+        res.redirect('index');
 
         if(err){
           return console.log('error runing query', err);
@@ -60,6 +52,35 @@ router.post("\addpac", urlEncodedParser, function(req,res){
         console.log(result.rows)
       });
     });
+  }
+});
+
+router.post("/adddoctor", urlEncodedParser, function(req,res){
+  if(!req.body)
+    return res.sendStatus(400);
+  console.log(req.body);
+
+  if(req.body.doctor_name && req.body.doctor_surname && req.body.doctor_patr && req.body.doctor_spec)
+  {
+    var args = [req.body.doctor_name, req.body.doctor_surname, req.body.doctor_patr, req.body.doctor_spec];
+    const text = 'INSERT INTO "Doctor"("Имя","Фамилия","Отчетсво","Специальность") VALUES($1, $2, $3, $4)';;
+    pg.connect(connect, function(err, client, done){
+      if(err){
+        console.log('error fetching client from pool', err);
+      }
+      client.query(text, args, function(err, result){
+        done();
+        res.redirect('index');
+
+        if(err){
+          return console.log('error runing query', err);
+        }
+        console.log(result.rows)
+      });
+    });
+  }
+  else {
+    console.log('not insert');
   }
 });
 
@@ -115,14 +136,46 @@ router.get("/list_pacients", function(req,res){
   });
 });
 
-// router.post('/list_pacients/:id',function (req, res){
-//   console.log(req.params.id);
-//   res.render('list_pacients');
-// });
+router.get("/list_doctors", function(req,res){
+  var args = [];
+  const text = 'SELECT * FROM "Doctor";';
+  pg.connect(connect, function(err, client, done){
+    if(err){
+      console.log('error fetching client from pool', err);
+    }
+    client.query(text, args, function(err, result){
+      res.render("list_doctors", {obj: result.rows});
+      done();
+
+      if(err){
+        return console.log('error runing query', err);
+      }
+      //console.log(result.rows)
+    });
+  });
+});
 
 router.delete('/list_pacients/:id', function(req, res){
   var args = [req.params.id];
   const text = 'DELETE FROM "Pacient" WHERE "@Pacient" = $1;';
+  pg.connect(connect, function(err, client, done){
+    if(err){
+      console.log('error fetching client from pool', err);
+    }
+    client.query(text, args, function(err, result){
+      done();
+      res.sendStatus(200);
+      if(err){
+        return console.log('error runing query', err);
+      }
+      console.log(result.rows)
+    });
+  });
+});
+
+router.delete('/list_doctors/:id', function(req, res){
+  var args = [req.params.id];
+  const text = 'DELETE FROM "Doctor" WHERE "@Doctor" = $1;';
   pg.connect(connect, function(err, client, done){
     if(err){
       console.log('error fetching client from pool', err);
@@ -149,6 +202,26 @@ router.post('/edit', urlEncodedParser, function(req, res){
     client.query(text, args, function(err, result){
       done();
       res.redirect('list_pacients');
+      console.log('redirect');
+      if(err){
+        return console.log('error runing query', err);
+      }
+      console.log(result.rows)
+    });
+  });
+});
+
+router.post('/editDoctor', urlEncodedParser, function(req, res){
+  var args = [req.body.name, req.body.surname, req.body.pathr, req.body.spec, req.body.id];
+  console.log(args);
+  const text = 'UPDATE "Doctor" SET "Имя" = $1, "Фамилия" = $2, "Отчетсво" = $3, "Специальность" = $4 WHERE "@Doctor" = $5;';
+  pg.connect(connect, function(err, client, done){
+    if(err){
+      console.log('error fetching client from pool', err);
+    }
+    client.query(text, args, function(err, result){
+      done();
+      res.redirect('list_doctors');
       console.log('redirect');
       if(err){
         return console.log('error runing query', err);

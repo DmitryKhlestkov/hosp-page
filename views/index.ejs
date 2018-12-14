@@ -28,13 +28,47 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-6">
-        <h3>Новая запись</h3>
-        <p>Здесь можно создать новую запись</p>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addDoctor" data-whatever="@getbootstrap">
+          Добавить врача
+        </button>
+        <div class="modal fade" id="addDoctor" tabindex="-1" role="dialog" aria-labelledby="addDoctorLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title" id="addDoctorLabel">Добавление нового специалиста</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <form id='formd' action='\adddoctor' method='post'>
+              <div class="modal-body">
+                <div class="form-group">
+                  <label for="doctor-surname" class="form-control-label">Фамилия:</label>
+                  <input type="text" class="form-control" id="doctort_surname" name="doctor_surname">
+                </div>
+                <div class="form-group">
+                  <label for="doctor-name" class="form-control-label">Имя:</label>
+                  <input type="text" class="form-control" id="doctor_name" name="doctor_name">
+                </div>
+                <div class="form-group">
+                  <label for="doctor-patr" class="form-control-label">Отчетво:</label>
+                  <input type="text" class="form-control" id="doctor_patr" name="doctor_patr">
+                </div>
+                <div class="form-group">
+                  <label for="doctor-spec" class="form-control-label">Специальность:</label>
+                  <input type="text" class="form-control" id="doctor_spec" name="doctor_spec">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+              </div>
+            </form>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="col-sm-6">
-        <!-- <h3>Пусто</h3>
-        <p>Пусто</p> -->
-          <div class="bd-example">
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap">
             Создать каточку пациента
           </button>
@@ -47,7 +81,7 @@
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                <form id='form' action='\addpac' method='post'>
+                <form id='formp' action='\addpac' method='post'>
                 <div class="modal-body">
                   <div class="form-group">
                     <label for="pacient-surname" class="form-control-label">Фамилия:</label>
@@ -78,7 +112,7 @@
               </div>
             </div>
           </div>
-        </div>
+
       </div>
     </div>
   </div>
