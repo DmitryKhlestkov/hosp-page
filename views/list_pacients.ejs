@@ -31,6 +31,25 @@
         }
       });
 
+      $('.open_card').on('click', function(){
+        var id = $(this).data('id');
+        var url = '/list_cards/'+id;
+        $.ajax({
+          url: url,
+          data: {
+            user_id: 451
+          },
+          type: 'get',
+          success: function(result){
+            window.location = url;
+            console.log('Open card');
+          },
+          error: function(error){
+            console.log(error);
+          }
+        });
+      });
+
       $('.edit-pacient').on('click', function() {
         $('#edit-form-surname').val($(this).data('surname'));
         $('#edit-form-name').val($(this).data('name'));
@@ -81,14 +100,15 @@
                   Изменить
                 </button>
                 <button type="button"class="btn btn-danger del-pacient" data-id="<%= element["@Pacient"] %>">Удалить</button>
-                <button type="button" class="btn btn-success">Карточка</button>
-              </div>
+                <button type="button" class="btn btn-success open_card" data-id="<%= element["@Pacient"] %>">Карточка</button>
+                <!-- <a class="nav-link" href="list_cards" data-id="<%= element["@Pacient"] %>">Карточка</a> -->
             </td>
         </tr>
       <% }); %>
     </tbody>
   </table>
 
+  <!--edit card pacient-->
   <div class="modal fade" id="editFormModal" tabindex="-1" role="dialog" aria-labelledby="editFormModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">

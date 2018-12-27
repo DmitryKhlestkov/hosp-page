@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Главная старница</title>
+  <meta charset="utf-8">
+  <!-- видимая пользователю область страницы -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <script>
+      $(document).ready(function(){
+
+        $('.edit-card').on('click', function() {
+          $('#edit-form-spec').val($(this).data('spec'));
+          $('#edit-form-visitdate').val($(this).data('visitdate'));
+          $('#edit-form-data').val($(this).data('data'));
+          $('#edit-form-id').val($(this).data('id'));
+        })
+
+        $('.add-card').on('click', function() {
+          $('#edit-form-idpac').val($(this).data('idpac'));
+        })
+      });
+    </script>
+  </head>
+  <body>
+    <% include blocks/header.ejs %>
+    <div class="jumbotron text-center">
+      <h1>Система хранения данных пациентов</h1>
+      <p>Здесь вы можите хранить всю информацию о пациенте.</p>
+    </div>
+
+    <table class="table table-striped" id="table1">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Доктор</th>
+          <th scope="col">Дата посещения</th>
+          <th scope="col">ФИО</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% obj.forEach(function(element, index, array) { %>
+          <tr id=<%= index+1 %>>
+              <td id="ii" name="ii"><%= index+1 %></td>
+              <td id="doctor_i" name="doctor_n"><%= element.Специальность %></td>
+              <td id="date_visit_i" name="date_visit_n"><%= element.VisitDate %></td>
+              <td id="date_visit_i" name="date_visit_n"><%= element.Фамилия %> <%= element.Имя %> <%= element.Отчество %></td>
+              <td>
+                  <button class="btn btn-outline-warning edit-card" data-toggle="modal" data-target="#editFormModal"    data-visitdate="<%= element.VisitDate %>"
+                                                                                                                data-spec="<%= element.Специальность %>"
+                                                                                                                data-data="<%= element.Data %>"
+                                                                                                                data-id="<%= element["@Card"] %>"
+                                                                                                                >
+                    Открыть
+                  </button>
+              </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <button type="button" class="btn btn-outline-success btn-sm btn-block add-card" data-toggle="modal" data-target="#addFormModal" data-idpac="<%= obj3 %>">
+      Новое посещение
+    </button>
+
+    <!--edit card pacient-->
+    <div class="modal fade" id="editFormModal" tabindex="-1" role="dialog" aria-labelledby="editFormModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form method="post" action="/editCard">
+            <input type="hidden" id="edit-form-id" name="id" />
+            <div class="modal-header">
+              <h4 class="modal-title" id="editFormModal">Карточка посещения</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="card_spec" class="form-control-label">Специалист:</label>
+                <input type="text" class="form-control" id="edit-form-spec" name="spec" disabled="disabled">
+              </div>
+              <div class="form-group">
+                <label for="card_visitdate" class="form-control-label">Дата посещения:</label>
+                <input type="date" class="form-control" id="edit-form-visitdate" name="visitdate" disabled="disabled">
+              </div>
+              <div class="form-group">
+                <label for="exampleFormControlTextarea1">Данные:</label>
+                <textarea class="form-control" id="edit-form-data" name="data" rows="3"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+              <button type="submit" class="btn btn-primary">Сохранить</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!--add card pacient-->
+    <div class="modal fade" id="addFormModal" tabindex="-1" role="dialog" aria-labelledby="addFormModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form method="post" action="/addCard">
+            <input type="hidden" id="edit-form-idpac" name="idpac" />
+            <div class="modal-header">
+              <h4 class="modal-title" id="addFormModal">Карточка посещения</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <select class="form-control form-control-lg" id="doctors" name="doc">
+                  <option value="0">Выберите из списка</option>
+                  <% obj2.forEach(function(element, index, array) { %>
+                    <option value='<%= element["@Doctor"] %>'><%= element.Специальность %></option>
+                  <% }); %>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="card_visitdate" class="form-control-label">Дата посещения:</label>
+                <input type="date" class="form-control" id="edit-form-visitdate" name="visitdate">
+              </div>
+              <div class="form-group">
+                <label for="exampleFormControlTextarea1">Данные:</label>
+                <textarea class="form-control" id="edit-form-data" name="data" rows="3"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+              <button type="submit" class="btn btn-primary">Сохранить</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+</body>
+</html>

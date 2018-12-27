@@ -18,9 +18,24 @@ router.use(function (req,res,next) {
   console.log("/" + req.method);
   next();
 });
-
+var listDoctors = []
 router.get("/index",function(req,res){
   //res.sendFile(path + "index.html");
+  pg.connect(connect, function(err, client, done){
+    if(err){
+      console.log('error fetching client from pool', err);
+    }
+  client.query('SELECT * FROM "Doctor"', [], function(err, result1){
+    listDoctors = result1.rows
+    done();
+
+    if(err){
+      return console.log('error runing query', err);
+    }
+    //console.log(result.rows)
+  });
+  });
+
   res.render('index');
 });
 
@@ -136,6 +151,33 @@ router.get("/list_pacients", function(req,res){
   });
 });
 
+router.get("/list_cards/:id", function(req,res){
+  console.log("open card");
+  var args = [req.params.id];
+  const text = 'select * from "Card" c join "Doctor" d on c."IdDoctor" = d."@Doctor" join "Pacient" p on p."@Pacient" = c."IdPacient" where p."@Pacient" = $1;';
+  pg.connect(connect, function(err, client, done){
+    if(err){
+      console.log('error fetching client from pool', err);
+    }
+    client.query(text, args, function(err, result){
+      var rs =result.rows
+      rs.forEach(function(element, index, array) {
+        var dt = moment(new Date(element.VisitDate)).format("YYYY-MM-DD").toString();
+        //console.log(dt);
+        element.VisitDate = dt
+      });
+      console.log(listDoctors);
+      res.render("list_cards", {obj: rs, obj2: listDoctors, obj3: req.params.id});
+      done();
+
+      if(err){
+        return console.log('error runing query', err);
+      }
+      //console.log(result.rows)
+    });
+  });
+});
+
 router.get("/list_doctors", function(req,res){
   var args = [];
   const text = 'SELECT * FROM "Doctor";';
@@ -209,6 +251,57 @@ router.post('/edit', urlEncodedParser, function(req, res){
       console.log(result.rows)
     });
   });
+});
+
+router.post('/editCard', urlEncodedParser, function(req, res){
+  var args = [req.body.data, req.body.id];
+  console.log(args);
+  const text = 'UPDATE "Card" SET "Data" = $1 WHERE "@Card" = $2;';
+  pg.connect(connect, function(err, client, done){
+    if(err){
+      console.log('error fetching client from pool', err);
+    }
+    client.query(text, args, function(err, result){
+      done();
+      res.redirect('list_pacients');
+      console.log('redirect');
+      if(err){
+        return console.log('error runing query', err);
+      }
+      console.log(result.rows)
+    });
+  });
+});
+
+router.post("/addCard", urlEncodedParser, function(req,res){
+  if(!req.body)
+    return res.sendStatus(400);
+  console.log(req.body);
+
+  if(req.body.doc && req.body.visitdate && req.body.idpac && req.body.data)
+  {
+    var args = [req.body.doc, req.body.idpac, req.body.visitdate, req.body.data];
+    const text = 'INSERT INTO "Card"("IdDoctor","IdPacient","VisitDate","Data") VALUES($1, $2, $3, $4)';;
+    pg.connect(connect, function(err, client, done){
+      if(err){
+        console.log('error fetching client from pool', err);
+      }
+      client.query(text, args, function(err, result){
+        done();
+        var urlnew = 'list_cards/'+req.body.idpac
+        res.redirect(urlnew);
+
+        if(err){
+          return console.log('error runing query', err);
+        }
+        console.log(result.rows)
+      });
+    });
+  }
+  else {
+    console.log('not insert');
+  }
+
 });
 
 router.post('/editDoctor', urlEncodedParser, function(req, res){
